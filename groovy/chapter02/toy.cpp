@@ -18,6 +18,8 @@ enum Token {
 
   // commands
   TOK_DEF = -2,
+  TOK_IMPORT = -3,
+  TOK_VAR = -5,
 
   // primary
   TOK_IDENT  = -6,
@@ -47,6 +49,12 @@ static int gettok()
 
         if (identifierStr == "def")
             return TOK_DEF;
+
+        if (identifierStr == "import")
+            return TOK_IMPORT;
+
+        if (identifierStr == "var")
+            return TOK_VAR;
 
 
         return TOK_IDENT;
@@ -415,6 +423,12 @@ static std::unique_ptr<FunctionAST> ParseDefinition() {
 
     if (!Body)
         return nullptr;
+    
+    if(CurTok != ';')
+    {
+      return nullptr;
+    }
+    getNextToken();
 
     if (CurTok != '}')
     {
@@ -437,7 +451,12 @@ static std::unique_ptr<FunctionAST> ParseTopLevelExpr() {
   }
   return nullptr;
 }
-
+/// external ::= 'import' prototype
+static std::unique_ptr<PrototypeAST> ParseExtern()
+{
+    getNextToken(); // eat extern.
+    return ParsePrototype();
+}
 
 //===----------------------------------------------------------------------===//
 // Top-Level parsing
@@ -452,7 +471,18 @@ static void HandleDefinition() {
   }
 }
 
-
+static void HandleExtern()
+{
+    if (ParseExtern())
+    {
+        fprintf(stderr, "Parsed an import\n");
+    }
+    else
+    {
+        // Skip token for error recovery.
+        getNextToken();
+    }
+}
 
 static void HandleTopLevelExpression() {
   // Evaluate a top-level expression into an anonymous function.
@@ -476,6 +506,9 @@ static void MainLoop() {
       break;
     case TOK_DEF:
       HandleDefinition();
+      break;
+    case TOK_IMPORT:
+      HandleExtern();
       break;
     default:
       HandleTopLevelExpression();

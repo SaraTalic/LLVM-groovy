@@ -28,6 +28,8 @@ enum Token {
 
   // commands
   TOK_DEF = -2,
+  TOK_IMPORT = -3,
+  TOK_VAR = -4,
 
 
   // primary
@@ -58,6 +60,12 @@ static int gettok()
 
         if (identifierStr == "def")
             return TOK_DEF;
+
+        if (identifierStr == "import")
+            return TOK_IMPORT;
+
+        if (identifierStr == "var")
+            return TOK_VAR;
 
 
         return TOK_IDENT;
@@ -463,6 +471,12 @@ static std::unique_ptr<FunctionAST> HandleDefinition() {
     if (!Body)
         return nullptr;
 
+    if(CurTok != ';')
+    {
+      return nullptr;
+    }
+    getNextToken();
+
     if (CurTok != '}')
     {
         return nullptr;
@@ -485,6 +499,13 @@ static std::unique_ptr<FunctionAST> ParseTopLevelExpr()
         return std::make_unique<FunctionAST>(std::move(Proto), std::move(E));
     }
     return nullptr;
+}
+
+/// external ::= 'import' prototype
+static std::unique_ptr<PrototypeAST> ParseExtern()
+{
+    getNextToken(); // eat import.
+    return ParsePrototype();
 }
 
 
@@ -656,6 +677,24 @@ static void HandleFunctionDefinition()
     }
 }
 
+static void HandleExtern()
+{
+    if (auto ProtoAST = ParseExtern())
+    {
+        if (auto *FnIR = ProtoAST->codegen())
+        {
+            fprintf(stderr, "Read import: ");
+            FnIR->print(errs());
+            fprintf(stderr, "\n");
+        }
+    }
+    else
+    {
+        // Skip token for error recovery.
+        getNextToken();
+    }
+}
+
 
 static void HandleTopLevelExpression()
 {
@@ -695,6 +734,9 @@ static void MainLoop()
         case TOK_DEF:
             HandleFunctionDefinition();
             break;
+        case TOK_IMPORT:
+            HandleExtern();
+            break;
         default:
             HandleTopLevelExpression();
             break;
@@ -716,7 +758,7 @@ int main()
     BinopPrecedence['*'] = 40; // highest.
 
     // Prime the first token.
-    fprintf(stderr, ">>> ");
+    fprintf(stderr, "ready> ");
     getNextToken();
 
     // Make the module, which holds all the code.
