@@ -2,7 +2,7 @@
 
 ## Overview
 
-This project is part of the **Compiler Construction** course and follows the LLVM Kaleidoscope tutorial. However, instead of implementing the Kaleidoscope language, it adapts the tutorial to the Groovy programming language syntax.
+This project is part of the **Compiler Construction** course and follows the [LLVM Kaleidoscope tutorial](https://llvm.org/docs/tutorial/MyFirstLanguageFrontend/index.html). However, instead of implementing the Kaleidoscope language, it adapts the tutorial to the Groovy programming language syntax.
 
 ## Features
 
