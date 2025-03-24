@@ -1,16 +1,13 @@
-#**Groovy Compiler Frontend using LLVM**
+# Groovy Compiler Frontend using LLVM
 
-##**Overview**
+## Overview
 
-This project is part of the **Compiler Construction** course and follows the [LLVM Kaleidoscope tutorial](https://llvm.org/docs/tutorial/MyFirstLanguageFrontend/index.html), but instead of implementing the Kaleidoscope language, it adapts the tutorial to the Groovy programming language syntax.
+This project is part of the **Compiler Construction** course and follows the LLVM Kaleidoscope tutorial. However, instead of implementing the Kaleidoscope language, it adapts the tutorial to the Groovy programming language syntax.
 
-##**Features**
+## Features
 
--**Lexical analysis**: Tokenizing Groovy-like syntax.
-
--**Parsing**: Constructing an Abstract Syntax Tree (AST).
-
--**Code generation**: Using LLVM IR for compilation.
-
--**JIT Execution**: Running compiled Groovy-like expressions.
+- **Lexical Analysis**: Tokenizing Groovy-like syntax.
+- **Parsing**: Constructing an Abstract Syntax Tree (AST).
+- **Code Generation**: Using LLVM Intermediate Representation (IR) for compilation.
+- **JIT Execution**: Running compiled Groovy-like expressions.
 
